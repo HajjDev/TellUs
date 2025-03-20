@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Sawarabi+Gothic&display=swap');
+
+
+*{
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(to right, #6dd5fa, #2980b9);
+}
+
+form{
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 50% auto;
+    width: 300px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+    background-color: rgb(114, 26, 191);
+    border-radius: 10px;
+}
+
+button{
+    border-style: none;
+    padding: 10px;
+    border-radius: 10px;
+    font-family:Nunito;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+button:hover{
+    background-color:rgb(51, 19, 100) ;
+    color: white;
+}
+
+p {
+    color: red;
+}
+

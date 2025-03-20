@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log-In Page</title>
+</head>
+<body>
+    <div class="sign-in">
+        <form action="" method="POST" novalidate>
+            <h1>Log in</h1>
+            {{ form.hidden_tag() }}
+            <p>
+            {{ form.username.label }}<br>
+            {{ form.username(size=32) }}
+
+            {% for error in form.username.errors %}
+                <br>
+                <span style="color: red; display: block;">Please fill out your username.</span>
+            {% endfor %}
+            </p>
+            <p>
+            {{ form.password.label }}<br>
+            {{ form.password(size=32) }}
+
+            {% for error in form.username.errors %}
+                <br>
+                <span style="color: red; display: block;">Please fill out your password.</span>
+            {% endfor %}
+            </p>
+            <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
+            <p>{{ form.submit() }}</p>
+        </form>
+    </div>
+</body>
+</html>
