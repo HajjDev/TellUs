@@ -3,7 +3,7 @@ from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 from app.models.user  import User
 
-class RegistrationForm(FlaskForm) :
+class RegistrationForm(Flaskform) :
     firstname = StringField('firstname', validator=[DataRequired()])
     lastname = StringField('lastname', validators=[DataRequired()])
     email = StringField('email', validators=[DataRequired(), Email()]) #Email() ensure that the user email repect the email format
