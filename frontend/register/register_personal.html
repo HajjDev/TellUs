@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Your Account - Personal Information</title>
+</head>
+<body>
+    <div class="register-form">
+        <div id="basic-information">
+            <div class="name-information">
+                <div>
+                    <label for="firstName">First name</label>  
+                    <input id="firstName" type="text"  placeholder="First name" required/>
+                </div>
+                <div>
+                    <label for="middleName">Middle name</label>  
+                    <input id="middleName" type="text"  placeholder="Middle name"/>
+                </div>
+                <div>
+                    <label for="surname">Surname</label>  
+                    <input id="surname" type="text"  placeholder="Surname" required/>
+                </div>
+            </div> <br>
+            <div class="personal-information">
+                <div>
+                    <label for="dateOfBirth">Date of birth</label>  
+                    <input id="dateOfBirth" type="date" required/>
+                </div>
+                <div>
+                    <p>Gender</p>
+                    <label><input type="radio" id="gender" name="gender" value="male" required /> Male</label><br />
+                    <label><input type="radio" id="gender" name="gender" value="female" /> Female</label><br />
+                    <label><input type="radio" id="gender" name="gender" value="other" /> Other</label>
+                </div> <br>
+            </div>
+        </div>
+    </div>
+    <button id="proceed">Proceed</button>
+    <script src="./publics/js/registerPersonal.js"></script>
+</body>
+</html>
