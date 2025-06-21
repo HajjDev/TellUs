@@ -16,9 +16,10 @@
     "expressjs": "^1.0.1",
     "mongodb": "^6.17.0",
     "mongoose": "^8.16.0",
-    "nodemon": "^3.1.10",
     "morgan": "^1.10.0",
-    "require": "^2.4.20"
+    "nodemon": "^3.1.10",
+    "require": "^0.4.4",
+    "xss": "^1.0.15"
   },
   "description": ""
 }
