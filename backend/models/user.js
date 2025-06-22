@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema({
     displayName: {type: String, required: true},
@@ -14,6 +15,25 @@ const userSchema = new mongoose.Schema({
     phoneNumber: {type: String, required: true},
     password: {type: String, required: true}
 });
+
+
+
+userSchema.pre('save', async function(next){
+    if (this.isModified('password')){ //verify that the password is hached only one time: when a new user is created or when a user modify his password
+        try{
+            this.password = await bcrypt.hash(this.password, 12);
+        }catch(err){
+            return next(err);
+        }
+    }
+
+    next();
+});
+
+
+userSchema.methods.comparePassword = function(password){
+    return bcrypt.compare(password, this.password);
+}; //this method is customized by us to easily verify the password at user login
 
 const User = mongoose.model("users", userSchema);
 
