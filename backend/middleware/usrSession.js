@@ -7,6 +7,7 @@ require('dotenv').config();
 
 const router = express.Router();
 const sessionID = uuidv4();
+
 console.log(sessionID);
 console.log(process.env.REDIS_USR);
 console.log(process.env.REDIS_SECRET);
@@ -26,7 +27,8 @@ router.use(session({
     cookie:{
         maxAge:60000, //1min
         sameSite:'Strict', //Against CSRF Attacks
-        httpOnly: true //Aigainst XSS Attacks
+        httpOnly: true, //Aigainst XSS Attacks: never accessible via js
+        secure: process.env.NODE_ENV == "production" //it must be false for localhost
     },
 
     resave:false, // required: force lightweight session keep alive
