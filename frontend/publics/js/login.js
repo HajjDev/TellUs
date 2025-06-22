@@ -4,6 +4,7 @@ document.getElementById("login-button").addEventListener('click', async ()=>{
         const url = "http://localhost:3001/api/auth/login";
         const ename = document.getElementById('ename').value;
         const password = document.getElementById('password').value;
+        
         const response = await fetch(url, {
             method:"POST",
             headers:{

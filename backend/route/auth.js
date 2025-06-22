@@ -9,6 +9,9 @@ const router = express.Router();
 router.use(express.json());
 router.use(morgan('dev'));
 router.use(usrSession);
+app.use(cors({
+    origin:'http://127.0.0.1:5500' //accept request comming from frontend
+}));
 
 router.post('/login', async (req, res)=>{
 
@@ -30,12 +33,12 @@ router.post('/login', async (req, res)=>{
             id : user._id,
             username : user.username,
             email: user.email,
-            displayName
+            displayName: user.displayName
         };
 
         //the frontend will need some user Data, but i need to give only none relevant info which are sufficient to identify the user
         res.status.json({message:"successfully connected", user:req.session.user});
-        
+
     }catch(err){
         console.error(err.message);
     }
