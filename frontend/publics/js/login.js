@@ -10,3 +10,14 @@ document.getElementById("login-button").addEventListener('click', async ()=>{
         console.error(error.message);
     }
 })
+
+const url ; //mongo_URI
+
+fetch(url,{
+    method:"GET",
+    headers:{
+        
+    }
+}
+
+).then(()=>{console.log()})
