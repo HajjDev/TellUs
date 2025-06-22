@@ -1,12 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
-<<<<<<< HEAD
-const session = require();
-const cookie_parser = require('cookie-parser');
-=======
 const usrSession = require('../middleware/usrSession');
 const User = require('../models/user');
->>>>>>> 7d10afdf864c61d2be238f2b383cd7c467c5d699
 const cors = require('cors');
 const morgan = require('morgan');
 const passport = require('passport');
@@ -51,11 +46,6 @@ router.post('/login', async (req, res)=>{
         console.error(err.message);
     }
 
-<<<<<<< HEAD
-router.post('/login', (req, res)=>{
-    req.
-=======
->>>>>>> 7d10afdf864c61d2be238f2b383cd7c467c5d699
 });
 
 module.exports = router;
