@@ -1,6 +1,6 @@
 document.getElementById("register").addEventListener('click', async ()=>{
     try{
-        const url = "";
+        const url = "http://localhost:3001/api/register/signup";
         const userName = document.getElementById("userName").value;
         const displayName = document.getElementById("displayName").value;
         const email = document.getElementById("email").value;
@@ -26,6 +26,16 @@ document.getElementById("register").addEventListener('click', async ()=>{
                     reEnteredPassword: reEnteredPassword
                 })
             });
+
+            console.log({
+                    ...personalInfo,
+                    userName: userName,
+                    displayName: displayName,
+                    email: email,
+                    phoneNumber: phoneNumber,
+                    password: password,
+                    reEnteredPassword: reEnteredPassword
+                });
 
             if (!response.ok) {
                 throw new Error(`Reponse status: ${response.status}`);

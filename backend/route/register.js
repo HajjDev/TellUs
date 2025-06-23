@@ -1,11 +1,18 @@
 const express = require("express");
+const cors = require('cors');
 const router = express.Router();
-const registerPersonalCheck = require('../middleware/registerPersonalCheck');
-const registerCrucialCheck = require('../middleware/registerCrucialCheck');
+const registerPersonalCheck = require('../middleware/register/registerPersonalCheck');
+const registerCrucialCheck = require('../middleware/register/registerCrucialCheck');
 const User = require('../models/user');
 
+router.use(cors({
+    origin:'http://127.0.0.1:5500'
+}));
+
 const registerCheck = [registerCrucialCheck, registerPersonalCheck];
-router.post("/register", registerCheck, async (request, res) => {
+
+
+router.post("/signup", registerCheck, async (request, res) => {
     try {
         const {
             firstName,
@@ -21,20 +28,23 @@ router.post("/register", registerCheck, async (request, res) => {
         } = request.body;
 
         const newUser = new User({
-            firstName,
-            middleName,
-            surName,
+            displayName,
+            userName,
+            name:{
+                familyName:surName,
+                givenName:firstName,
+                middleName:middleName
+            },
+
             dateOfBirth,
             gender,
-            userName,
-            displayName,
             email,
             phoneNumber,
             password
         });
 
         await newUser.save();
-        res.status.json({ message: "User registered successfully" });
+        res.status(201).json({ message: "User registered successfully" });
 
     } catch(err) {
         console.log(err.message)

@@ -8,6 +8,8 @@ const registerPersonalCheck = async (request, res, next) => {
     request.body.dateOfBirth = xss(request.body.dateOfBirth);
     request.body.gender = xss(request.body.gender);
 
+    console.log(request.body);
+
     const {
         firstName,
         middleName,
@@ -17,7 +19,7 @@ const registerPersonalCheck = async (request, res, next) => {
     } = request.body;
 
     if (!firstName || !surName || !dateOfBirth || !gender) {
-        return res.status(400).send("...")
+        return res.status(400).send("Lacking usefull Data")
     };
 
     next();

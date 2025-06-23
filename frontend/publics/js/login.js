@@ -1,4 +1,4 @@
-document.getElementById("login-button").addEventListener('click', async ()=>{
+document.getElementById("login").addEventListener('click', async ()=>{
     try{
 
         const url = "http://localhost:3001/api/auth/login";
@@ -14,14 +14,17 @@ document.getElementById("login-button").addEventListener('click', async ()=>{
             body:JSON.stringify({
                ename:ename,
                password:password 
-            })
+            }),
+
+            credentials:"include" //allow cookie
         })
 
         if (!response.ok) {
             throw new Error(`Response status: ${response.status}`);
         }
 
-        const json = response.json();
+        const json = await response.json();
+        console.log(response);
         console.log(json);
 
     }catch(error){
