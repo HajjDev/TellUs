@@ -1,3 +1,8 @@
+const input = document.querySelector("#phone");
+  window.intlTelInput(input, {
+    loadUtils: () => import("http://127.0.0.1:5500/frontend/intl-tel-input-master/intl-tel-input-master/build/js/utils.js"),
+  });
+
 document.getElementById("register").addEventListener('click', async ()=>{
     try{
         const url = "http://localhost:3001/api/register/signup";
