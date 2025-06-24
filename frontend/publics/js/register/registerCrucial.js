@@ -1,7 +1,17 @@
 const input = document.querySelector("#phone");
   window.intlTelInput(input, {
     loadUtils: () => import("http://127.0.0.1:5500/frontend/intl-tel-input-master/intl-tel-input-master/build/js/utils.js"),
-  });
+});
+
+input.setAttribute("maxLength", 0);
+
+function setMaxLengthInput() {
+    input.setAttribute("maxLength", input.getAttribute("placeholder").length);
+};
+
+input.addEventListener("countrychange", () => {
+    setMaxLengthInput();
+});
 
 document.getElementById("register").addEventListener('click', async ()=>{
     try{
