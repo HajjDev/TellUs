@@ -22,6 +22,14 @@ const registerPersonalCheck = async (request, res, next) => {
         return res.status(400).send("Lacking usefull Data")
     };
 
+    if (firstName.length < 2) {
+        return res.status(400).send("firstName too short")
+    };
+
+    if (surName.length < 2) {
+        return res.status(400).send("surName too short")
+    };
+
     next();
 }
 
