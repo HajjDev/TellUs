@@ -16,8 +16,6 @@ const userSchema = new mongoose.Schema({
     password: {type: String, required: true}
 });
 
-
-
 userSchema.pre('save', async function(next){
     if (this.isModified('password')){ //verify that the password is hached only one time: when a new user is created or when a user modify his password
         try{
@@ -29,7 +27,6 @@ userSchema.pre('save', async function(next){
 
     next();
 });
-
 
 userSchema.methods.comparePassword = function(password){
     return bcrypt.compare(password, this.password);
