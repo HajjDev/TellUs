@@ -13,7 +13,8 @@ const userSchema = new mongoose.Schema({
     gender: String,
     email: {type: String, required: true},
     phoneNumber: {type: String, required: true},
-    password: {type: String, required: true}
+    password: {type: String, required: true},
+    totpSecret:String
 });
 
 

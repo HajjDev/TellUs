@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../../intl-tel-input-master/intl-tel-input-master/build/css/intlTelInput.css">
+    <link rel="stylesheet" href="../../css/register_crucial.css">
+    <link rel="stylesheet" href="../../../intl-tel-input-master/intl-tel-input-master/build/css/demo.css">
     <title>Document</title>
 </head>
 <body>
@@ -20,11 +23,11 @@
 
         <div>
             <label for="email">Email</label>  
-            <input id="email" type="text"  placeholder="Enter a valid email address" required/>
+            <input id="email" type="email"  placeholder="Enter a valid email address" required/>
         </div> <br>
         <div>
             <label for="phoneNumber">Phone number</label>  
-            <input id="phoneNumber" type="text"  placeholder="Phone number"/>
+            <input id="phone" type="tel">
         </div> <br>
         <div class="password-div">
             <div>
@@ -37,6 +40,7 @@
             </div>
         </div> <br>
         <button id="register">Register</button>
+        <script src="../../../intl-tel-input-master/intl-tel-input-master/build/js/intlTelInput.js"></script>
         <script src="../../js/register/registerCrucial.js"></script>
     </div>
 </body>

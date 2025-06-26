@@ -1,21 +1,34 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const sessionMiddleware = require('../middleware/usrSession');
 const User = require('../models/user');
 const cors = require('cors');
 const morgan = require('morgan');
-const router = express.Router();
+const cookieParser = require('cookie-parser');
+const cookieExtractor = require('../utils/cookie'); 
+const {authorize, verifyAccessToken, verifyRefreshToken } = require('../middleware/auth');
+const crypto = require('crypto');
 
-router.use(express.json());
-router.use(morgan('dev'));
-router.use(sessionMiddleware);
-router.use(cors({
+const loginRouter = express.Router();
+const logoutRouter = express.Router();
+const refreshToken = express.Router();
+
+loginRouter.use(express.json());
+loginRouter.use(morgan('dev'));
+loginRouter.use(cookieParser);
+loginRouter.use(cors({
     origin:'http://127.0.0.1:5500', //accept request comming from frontend
     credentials: true //allow cookie
 }));
 
-router.post('/login', async (req, res)=>{
+logoutRouter.use(express.json());
+logoutRouter.use(morgan('dev'));
+logoutRouter.use(cookieParser);
+logoutRouter.use(cors({
+    origin:'http://127.0.0.1:5500', //accept request comming from frontend
+    credentials: true //allow cookie
+}));
 
+loginRouter.post('/login', async (req, res)=>{
     try{
         const input = req.body;
         const user = await User.findOne({ 
@@ -30,22 +43,37 @@ router.post('/login', async (req, res)=>{
         }
 
         
-
-        if (! await user.comparePassword(input.password)){
+        if (!await user.comparePassword(input.password)){
             res.status(400).send("false credentials");
         }
 
         //this session creation send automatically a cookie to the client containing the sessionID
-        req.session.user = {
-            id : user._id,
-            username : user.userName,
-            email: user.email,
-            displayName: user.displayName
-        };
 
-        console.log(req.session);
+        const access_token = jwt.sign({id: user._id,
+                                       jti:crypto.randomUUID()}, process.env.ACCESS_TOKEN_SECRET, {expiresIn:'1800000'});
+
+        const refresh_token = jwt.sign({id: user._id, 
+                                        jti:crypto.randomUUID()}, process.env.REFRESH_TOKEN_SECRET, {expiresIn:'90 days'});
+
+        res.cookie('access_token', access_token, {
+            maxAge:1800000, //1h
+            sameSite:'Strict', //Against CSRF Attacks
+            httpOnly: true, //Aigainst XSS Attacks: never accessible via js
+            secure: process.env.NODE_ENV === "production" //it must be false for localhost
+        });
+
+        res.cookie('refresh_token', refresToken, {
+            maxAge:7776000000, //90 days
+            sameSite:'Strict', //Against CSRF Attacks
+            httpOnly: true, //Aigainst XSS Attacks: never accessible via js
+            secure: process.env.NODE_ENV === "production" //it must be false for localhost            
+        });
         //the frontend will need some user Data, but i need to give only none relevant info which are sufficient to identify the user
-        res.status(201).json({message:"successfully connected", user:req.session.user});
+        res.status(201).json({message:"successfully connected", user:{
+            id:user._id,
+            username:user.userName
+            //role:user.role
+        }});
 
     }catch(err){
         console.error(err.message);
@@ -53,4 +81,28 @@ router.post('/login', async (req, res)=>{
 
 });
 
-module.exports = router;
+
+
+
+refreshToken.post('/refresh_token', verifyRefreshToken, (req, res)=>{
+    refresh_token = cookieExtractor(req);
+    if (!req.verified){
+        res.redirect('http://localhost:3001/api/auth/login');
+    }
+
+    res.cookie('access_token', access_token, {
+        maxAge:1800000, //1h
+        sameSite:'Strict', //Against CSRF Attacks
+        httpOnly: true, //Aigainst XSS Attacks: never accessible via js
+        secure: process.env.NODE_ENV === "production" //it must be false for localhost
+    });
+
+    res.status(201).send();
+});
+
+logoutRouter.post('/logout', (req, res)=>{
+    
+});
+
+
+module.exports = {loginRouter, logoutRouter, refreshToken};
