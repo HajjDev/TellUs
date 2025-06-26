@@ -16,6 +16,4 @@ document.getElementById("proceed").addEventListener('click', ()=>{
         console.log(localStorage);
 
         window.location.href = "../../html/register/register_crucial.html"; 
-        
-
 });

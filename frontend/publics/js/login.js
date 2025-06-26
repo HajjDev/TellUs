@@ -17,11 +17,11 @@ document.getElementById("login").addEventListener('click', async ()=>{
             }),
 
             credentials:"include" //allow cookie
-        })
+        });
 
         if (!response.ok) {
             throw new Error(`Response status: ${response.status}`);
-        }
+        };
 
         const json = await response.json();
         console.log(response);
@@ -31,3 +31,7 @@ document.getElementById("login").addEventListener('click', async ()=>{
         console.error(error.message);
     }
 })
+
+document.getElementById("newAccRegister").addEventListener('click', () => {
+    window.location.href = "../html/register/register_personal.html";
+});

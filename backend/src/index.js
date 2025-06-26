@@ -6,7 +6,6 @@ const authRouter = require("../route/auth");
 const registerRouter = require("../route/register")
 const morgan = require('morgan');
 
-
 const MONGO_URI = process.env.MONGO_URI;
 const PORT = process.env.PORT
 
@@ -16,11 +15,10 @@ app.use(morgan('dev'));
 app.use('/api/auth', authRouter);
 app.use('/api/register', registerRouter);
 
-
 mongoose.connect(MONGO_URI)   
  .then(() => console.log("Database connected!"))
  .catch(err => console.log(err));
 
 app.listen(PORT, () => {
-    console.log("Server is running")
+    console.log(`Server is running on ${PORT}`)
 });

@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../../../intl-tel-input-master/intl-tel-input-master/build/css/intlTelInput.css">
-    <link rel="stylesheet" href="../../css/register_crucial.css">
-    <link rel="stylesheet" href="../../../intl-tel-input-master/intl-tel-input-master/build/css/demo.css">
     <title>Document</title>
 </head>
 <body>
@@ -13,11 +11,11 @@
         <div class="profile-information">
             <div>
                 <label for="userName">Username</label>  
-                <input id="userName" type="text"  placeholder="Username" required/>
+                <input id="userName" type="text" minlength=2 maxlength=30 placeholder="Username" required/>
             </div>
             <div>
                 <label for="displayName">Display name</label>  
-                <input id="displayName" type="text"  placeholder="Display name" required/>
+                <input id="displayName" type="text" minlength=2 maxlength=40 placeholder="Display name" required/>
             </div>
         </div> <br>
 
@@ -32,11 +30,11 @@
         <div class="password-div">
             <div>
                 <label for="password">Password</label>  
-                <input id="password" type="password"  placeholder="Password" required/>
+                <input id="password" type="password" maxlength=32 placeholder="Password" required/>
             </div>
             <div>
                 <label for="password-confirmation">Confirm your password</label>  
-                <input id="password-confirmation" type="password"  placeholder="Re-enter your password" required/>
+                <input id="password-confirmation" type="password" maxlength=32 placeholder="Re-enter your password" required/>
             </div>
         </div> <br>
         <button id="register">Register</button>

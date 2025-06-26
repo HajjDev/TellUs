@@ -1,30 +1,35 @@
 const input = document.querySelector("#phone");
   window.intlTelInput(input, {
     loadUtils: () => import("http://127.0.0.1:5500/frontend/intl-tel-input-master/intl-tel-input-master/build/js/utils.js"),
+});
 
-  });
+input.setAttribute("maxLength", 0);
 
+function setMaxLengthInput() {
+    input.setAttribute("maxLength", input.getAttribute("placeholder").length);
+};
 
-
-let l = 9;
-if (input.getAttribute('placeholder')){
-    l = input.getAttribute('placeholder').length ;
-}
-
-input.setAttribute('maxLength', l);
+input.addEventListener("countrychange", () => {
+    setMaxLengthInput();
+});
 
 document.getElementById("register").addEventListener('click', async ()=>{
     try{
         const url = "http://localhost:3001/api/register/signup";
         const userName = document.getElementById("userName").value;
+        console.log(userName);
         const displayName = document.getElementById("displayName").value;
+        console.log(displayName);
         const email = document.getElementById("email").value;
-        const phoneNumber = document.getElementById("phoneNumber").value;
+        console.log(email);
+        const phoneNumber = document.getElementById("phone").value;
+        console.log(phoneNumber);
         const password = document.getElementById("password").value;
+        console.log(password);
         const reEnteredPassword = document.getElementById("password-confirmation").value;
-
+        console.log(reEnteredPassword);
         const personalInfo = JSON.parse(localStorage.getItem("personalInfo")) || {};
-
+        console.log(personalInfo);
         try {
             const response = await fetch(url, {
                 method: 'POST',
