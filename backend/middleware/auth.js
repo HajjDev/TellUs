@@ -14,37 +14,89 @@ const authorize = (roles = []) => {
 
 
 const verifyRefreshToken = () =>{
-    return (req, res, next)=>{
+    return async (req, res, next)=>{
+        const client = await connectRedis();
+        const token = cookieExtractor(req, 'refresh_token');
+
+        if (!token){
+            return res.redirect('http://localhost:3001/api/auth/login');
+        }
+
         try{
-            client = connectRedis();
-            value = cookieExtractor(req, 'refresh_token')
-            if (){
-                
+            
+            decoded = jwt.verify(token, process.env.REFRESH_SECRET);
+
+            if (decoded && await client.get(decoded.jti)){
+                throw {name:'TokenBlacklistedError', message: 'jwt replaying'};
             }
-            jwt.verify(req.cookies.refresh_token, process.env.REFRESH_SECRET);
-            req.verified = {verified:true};
+
+            next();
+
         }catch(err){
-            console.error(err);
-            req.verified = {verified:false};
-            //;//file error401 in views
+            next(err);
+           
         }  
 
-        next();
+    }
+
+}
+
+const refreshErrorHandler = ()=>{
+    return async (err, req, res, next)=>{
+            const client = connectRedis();
+            const token = cookieExtractor(req, 'refresh_token');
+
+            res.clearCookie('refresh_token', { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: 'Strict' });
+
+            if (err.name == 'TokenExpiredError'){
+                decoded = jwt.decode(token);
+                await client.set(decoded.jti, 'blacklisted');
+            }
+
+            
+            return res.redirect('http://localhost:3001/api/auth/login');
+
     }
 
 }
 
 const verifyAccessToken = ()=>{
-    return (req, res, next)=>{
+    return async (req, res, next)=>{
+        const client = await connectRedis();
+        const token = cookieExtractor(req, 'refresh_token');
         try{
-            jwt.verify(req.cookies.access_token, process.env.ACCESS_TOKEN_SECRET);
-        }catch(err){
-            console.error(err);
-            res.redirect('http://localhost:3001/api/auth/refresh_token');
-        }
+            const decoded = jwt.verify(req.cookies.access_token, process.env.ACCESS_TOKEN_SECRET);
 
-        next();
+            if (decoded && await client.get(decoded.jti)){
+                throw {name:'TokenBlacklistedError',    message: 'jwt replaying'};
+            }
+
+            next();
+
+        }catch(err){
+            next(err)
+        }
     }
 }
 
-module.exports = {authorize, verifyAccessToken, verifyRefreshToken };
+const accessErrorHandler = ()=>{
+    return async (err, req, res, next)=>{
+        const client = await connectRedis();
+        const token = cookieExtractor(req, 'refresh_token');
+
+        res.clearCookie('access_token', { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: 'Strict' });
+
+        if (err.name == 'TokenExpiredError'){
+            const decoded = jwt.decode(token);
+            await client.set(decoded.jti, 'blacklisted');
+            return res.redirect('http://localhost:3001/api/auth/refresh_token');
+
+        }
+
+        
+        return res.redirect('http://localhost:3001/api/auth/login');
+
+    }
+}
+
+module.exports = {authorize, verifyAccessToken, accessErrorHandler, verifyRefreshToken, refreshErrorHandler};

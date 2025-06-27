@@ -5,7 +5,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const cookieExtractor = require('../utils/cookie'); 
-const {authorize, verifyAccessToken, verifyRefreshToken } = require('../middleware/auth');
+const {verifyRefreshToken, refreshErrorHandler} = require('../middleware/auth');
 const crypto = require('crypto');
 
 const loginRouter = express.Router();
@@ -84,11 +84,11 @@ loginRouter.post('/login', async (req, res)=>{
 
 
 
-refreshToken.post('/refresh_token', verifyRefreshToken, (req, res)=>{
-    refresh_token = cookieExtractor(req);
-    if (!req.verified){
-        res.redirect('http://localhost:3001/api/auth/login');
-    }
+refreshToken.post('/refresh_token', verifyRefreshToken, refreshErrorHandler, (req, res)=>{
+    const access_token = jwt.sign({id: req.user.id, //here the request contain the data of the user
+                                    jti:crypto.randomUUID()}, process.env.ACCESS_TOKEN_SECRET, {expiresIn:'1800000'});
+
+    res.clearCookie('access_token', { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: 'Strict' });
 
     res.cookie('access_token', access_token, {
         maxAge:1800000, //1h
@@ -97,7 +97,7 @@ refreshToken.post('/refresh_token', verifyRefreshToken, (req, res)=>{
         secure: process.env.NODE_ENV === "production" //it must be false for localhost
     });
 
-    res.status(201).send();
+    res.status(201).send('new access_token created');
 });
 
 logoutRouter.post('/logout', (req, res)=>{
