@@ -2,11 +2,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const User = require('../models/user');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 const morgan = require('morgan');
-const cookieParser = require('cookie-parser');
 const cookieExtractor = require('../utils/cookie'); 
 const {verifyRefreshToken, refreshErrorHandler} = require('../middleware/auth');
 const crypto = require('crypto');
+require('dotenv').config();
 
 const loginRouter = express.Router();
 const logoutRouter = express.Router();
@@ -14,7 +15,6 @@ const refreshToken = express.Router();
 
 loginRouter.use(express.json());
 loginRouter.use(morgan('dev'));
-loginRouter.use(cookieParser);
 loginRouter.use(cors({
     origin:'http://127.0.0.1:5500', //accept request comming from frontend
     credentials: true //allow cookie
@@ -22,7 +22,6 @@ loginRouter.use(cors({
 
 logoutRouter.use(express.json());
 logoutRouter.use(morgan('dev'));
-logoutRouter.use(cookieParser);
 logoutRouter.use(cors({
     origin:'http://127.0.0.1:5500', //accept request comming from frontend
     credentials: true //allow cookie
@@ -49,6 +48,8 @@ loginRouter.post('/login', async (req, res)=>{
 
         //this session creation send automatically a cookie to the client containing the sessionID
 
+        console.log(process.env.ACCESS_TOKEN_SECRET);
+        console.log(process.env.REFRESH_TOKEN_SECRET);
         const access_token = jwt.sign({id: user._id,
                                        jti:crypto.randomUUID()}, process.env.ACCESS_TOKEN_SECRET, {expiresIn:'1800000'});
 
@@ -62,7 +63,7 @@ loginRouter.post('/login', async (req, res)=>{
             secure: process.env.NODE_ENV === "production" //it must be false for localhost
         });
 
-        res.cookie('refresh_token', refresToken, {
+        res.cookie('refresh_token', refresh_token, {
             maxAge:7776000000, //90 days
             sameSite:'Strict', //Against CSRF Attacks
             httpOnly: true, //Aigainst XSS Attacks: never accessible via js
@@ -85,8 +86,9 @@ loginRouter.post('/login', async (req, res)=>{
 
 
 refreshToken.post('/refresh_token', verifyRefreshToken, refreshErrorHandler, (req, res)=>{
-    const access_token = jwt.sign({id: req.user.id, //here the request contain the data of the user
+    const access_token = jwt.sign({id: req.body.user.id, 
                                     jti:crypto.randomUUID()}, process.env.ACCESS_TOKEN_SECRET, {expiresIn:'1800000'});
+    //here the request contain the data of the user|| req.params.id could also be used depending on where the frontend has stored the id, URI or req body
 
     res.clearCookie('access_token', { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: 'Strict' });
 
