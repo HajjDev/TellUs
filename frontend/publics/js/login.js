@@ -35,3 +35,33 @@ document.getElementById("login").addEventListener('click', async ()=>{
 document.getElementById("newAccRegister").addEventListener('click', () => {
     window.location.href = "../html/register/register_personal.html";
 });
+
+const button = document.getElementById('send_test');
+
+button.addEventListener('click', async ()=>{
+    try{
+
+        const url = "http://localhost:3001/test";
+        
+        const response = await fetch(url, {
+            method:"GET",
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            credentials:"include" //allow cookie
+        });
+
+        if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+        };
+
+        const json = await response.json();
+        console.log(response);
+        console.log(json);
+
+    }catch(error){
+        console.error(error.message);
+    }
+
+});
