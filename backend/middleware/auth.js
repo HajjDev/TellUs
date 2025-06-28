@@ -13,8 +13,7 @@ const authorize = (roles = []) => {
 };
 
 
-const verifyRefreshToken = () =>{
-    return async (req, res, next)=>{
+const verifyRefreshToken = async (req, res, next)=>{
         const client = await connectRedis();
         const token = cookieExtractor(req, 'refresh_token');
 
@@ -24,7 +23,7 @@ const verifyRefreshToken = () =>{
 
         try{
             
-            decoded = jwt.verify(token, process.env.REFRESH_SECRET);
+            decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
 
             if (decoded && await client.get(decoded.jti)){
                 throw {name:'TokenBlacklistedError', message: 'jwt replaying'};
@@ -39,14 +38,12 @@ const verifyRefreshToken = () =>{
 
     }
 
-}
 
-const refreshErrorHandler = ()=>{
-    return async (err, req, res, next)=>{
+const refreshErrorHandler = async (err, req, res, next)=>{
             const client = connectRedis();
             const token = cookieExtractor(req, 'refresh_token');
 
-            res.clearCookie('refresh_token', { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: 'Strict' });
+            res.clearCookie('refresh_token', { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: 'None' });
 
             if (err.name == 'TokenExpiredError'){
                 decoded = jwt.decode(token);
@@ -58,14 +55,13 @@ const refreshErrorHandler = ()=>{
 
     }
 
-}
 
-const verifyAccessToken = ()=>{
-    return async (req, res, next)=>{
+const verifyAccessToken = async (req, res, next)=>{
         const client = await connectRedis();
+        console.log(req.cookies);
         const token = cookieExtractor(req, 'refresh_token');
         try{
-            const decoded = jwt.verify(req.cookies.access_token, process.env.ACCESS_TOKEN_SECRET);
+            const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
             if (decoded && await client.get(decoded.jti)){
                 throw {name:'TokenBlacklistedError',    message: 'jwt replaying'};
@@ -77,14 +73,13 @@ const verifyAccessToken = ()=>{
             next(err)
         }
     }
-}
 
-const accessErrorHandler = ()=>{
-    return async (err, req, res, next)=>{
+
+const accessErrorHandler = async (err, req, res, next)=>{
         const client = await connectRedis();
         const token = cookieExtractor(req, 'refresh_token');
 
-        res.clearCookie('access_token', { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: 'Strict' });
+        res.clearCookie('access_token', { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: 'None' });
 
         if (err.name == 'TokenExpiredError'){
             const decoded = jwt.decode(token);
@@ -97,6 +92,5 @@ const accessErrorHandler = ()=>{
         return res.redirect('http://localhost:3001/api/auth/login');
 
     }
-}
 
 module.exports = {authorize, verifyAccessToken, accessErrorHandler, verifyRefreshToken, refreshErrorHandler};

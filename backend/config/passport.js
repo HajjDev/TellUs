@@ -8,6 +8,7 @@ require('dotenv').config(); //import the environment variables
 
 const opts = {
     jwtFromRequest : ExtractJwt.fromExtractor([cookieExtractor]),
+    secretOrKey: process.env.ACCESS_TOKEN_SECRET,
 };
 
 
