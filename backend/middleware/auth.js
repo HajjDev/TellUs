@@ -24,7 +24,7 @@ const verifyRefreshToken = () =>{
 
         try{
             
-            decoded = jwt.verify(token, process.env.REFRESH_SECRET);
+            decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
 
             if (decoded && await client.get(decoded.jti)){
                 throw {name:'TokenBlacklistedError', message: 'jwt replaying'};
