@@ -34,10 +34,10 @@ loginRouter.post('/login', async (req, res)=>{
         //this session creation send automatically a cookie to the client containing the sessionID
 
         const access_token = jwt.sign({id: user._id,
-                                       jti:crypto.randomUUID()}, process.env.ACCESS_TOKEN_SECRET, {expiresIn:'2m'}); //1800000
+                                       jti:crypto.randomUUID()}, process.env.ACCESS_TOKEN_SECRET, {expiresIn:'30m'}); //1800000
 
         const refresh_token = jwt.sign({id: user._id, 
-                                        jti:crypto.randomUUID()}, process.env.REFRESH_TOKEN_SECRET, {expiresIn:'5m'});//90 days
+                                        jti:crypto.randomUUID()}, process.env.REFRESH_TOKEN_SECRET, {expiresIn:'90 days'});//90 days
 
         res.cookie("access_token", access_token, {
             httpOnly: true,
@@ -74,8 +74,8 @@ loginRouter.post('/login', async (req, res)=>{
 
 refreshToken.get('/refresh_token', verifyRefreshToken, refreshErrorHandler, (req, res)=>{
     console.log('redirected');
-    const access_token = jwt.sign({id: req.body.user.id, 
-                                    jti:crypto.randomUUID()}, process.env.ACCESS_TOKEN_SECRET, {expiresIn:'2m'});
+    const access_token = jwt.sign({id: req.user.id, 
+                                    jti:crypto.randomUUID()}, process.env.ACCESS_TOKEN_SECRET, {expiresIn:'1m'});
     //here the request contain the data of the user|| req.params.id could also be used depending on where the frontend has stored the id, URI or req body
 
 
