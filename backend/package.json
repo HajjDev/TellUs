@@ -28,8 +28,10 @@
     "morgan": "^1.10.0",
     "nodemon": "^3.1.10",
     "passport-jwt": "^4.0.1",
+    "qrcode": "^1.5.4",
     "redis": "^5.5.6",
     "require": "^0.4.4",
+    "speakeasy": "^2.0.0",
     "uuid": "^11.1.0",
     "xss": "^1.0.15"
   },

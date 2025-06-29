@@ -1,17 +1,17 @@
 const express = require('express');
 const speakeasy = require('speakeasy');
-const passport = require('passport');
+const crypto = require('crypto');
 const router = express.Router();
 
 
-router.post('/enable-mfa', passport.authenticate('jwt', {session: false}), async (req, res) =>{
+router.post('/enable-mfa', async (req, res) =>{
     const secret = speakeasy.generateSecret();
-    req.user.totpSecret =  secret.base32;
+    req.user.totpSecret = secret.base32;
     await req.user.save();
     res.json({ secret : secret.otpauth_url }); //seend the response
-});
+});c    
 
-router.post('/verify-mfa', passport.authenticate('jwt', { session: false }), (req, res)=>{
+router.post('/verify-mfa', (req, res)=>{
     const { token } = req.body;
     const verified = speakeasy.totp.verify({
         secret: req.user.totpSecret,
