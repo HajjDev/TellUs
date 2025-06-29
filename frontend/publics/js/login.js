@@ -41,14 +41,10 @@ const button = document.getElementById('send_test');
 button.addEventListener('click', async ()=>{
     try{
 
-        const url = "http://localhost:3001/test";
+        const url = "http://localhost:3001/test/test";
         
         const response = await fetch(url, {
             method:"GET",
-            headers:{
-                "Content-Type":"application/json"
-            },
-
             credentials:"include" //allow cookie
         });
 
