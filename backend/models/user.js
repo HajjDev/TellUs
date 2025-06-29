@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
+// User Schema with all the informations provided while registering
 const userSchema = new mongoose.Schema({
     displayName: {type: String, required: true},
     userName: {type: String, required: true},
@@ -9,11 +10,13 @@ const userSchema = new mongoose.Schema({
         givenName: {type: String, required: true},
         middleName: String,
     },
+    createdAt: Date,
     dateOfBirth: Date,
     gender: String,
     email: {type: String, required: true},
     phoneNumber: {type: String, required: true},
     password: {type: String, required: true},
+    verified: Boolean,
     totpSecret:String
 });
 

@@ -31,6 +31,11 @@ loginRouter.post('/login', async (req, res)=>{
             res.status(400).send("false credentials");
         }
 
+        /// If the user is not verified, they can't log-in
+        if (!user.verified) {
+            res.status(400).send("Not verified");
+        }
+
         //this session creation send automatically a cookie to the client containing the sessionID
 
         const access_token = jwt.sign({id: user._id,
