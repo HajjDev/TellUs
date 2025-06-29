@@ -33,31 +33,30 @@ loginRouter.post('/login', async (req, res)=>{
 
         //this session creation send automatically a cookie to the client containing the sessionID
 
-        console.log(process.env.ACCESS_TOKEN_SECRET);
-        console.log(process.env.REFRESH_TOKEN_SECRET);
-        console.log(user);
-        console.log(crypto.randomUUID());
         const access_token = jwt.sign({id: user._id,
-                                       jti:crypto.randomUUID()}, process.env.ACCESS_TOKEN_SECRET, {expiresIn:'0.5m'}); //1800000
+                                       jti:crypto.randomUUID()}, process.env.ACCESS_TOKEN_SECRET, {expiresIn:'2m'}); //1800000
 
         const refresh_token = jwt.sign({id: user._id, 
-                                        jti:crypto.randomUUID()}, process.env.REFRESH_TOKEN_SECRET, {expiresIn:'1m'});//90 days
+                                        jti:crypto.randomUUID()}, process.env.REFRESH_TOKEN_SECRET, {expiresIn:'5m'});//90 days
 
-        res.cookie('access_token', access_token, {
-            maxAge: 1800000, //1h while
-            sameSite:'None', //Against CSRF Attacks
-            httpOnly: true, //Aigainst XSS Attacks: never accessible via js
-            secure: process.env.NODE_ENV === "production" //it must be false for localhost
+        res.cookie("access_token", access_token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production", 
+            sameSite: "Lax",       
+            path: "/",
+            maxAge: 1000 * 60 * 30
         });
 
-        res.cookie('refresh_token', refresh_token, {
-            maxAge: 7776000000, //90 days 
-            sameSite:'None', //Against CSRF Attacks
-            httpOnly: true, //Aigainst XSS Attacks: never accessible via js
-            secure: process.env.NODE_ENV === "production" //it must be false for localhost            
+
+        res.cookie("refresh_token", refresh_token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",         
+            sameSite: "Lax",       
+            path: "/",
+            maxAge: 1000 * 60 * 30 * 2
         });
-        console.log('|||||||||||||||||||||');
-        console.log(req.cookies);
+
+        
         //the frontend will need some user Data, but i need to give only none relevant info which are sufficient to identify the user
         res.status(201).json({message:"successfully connected", user:{
             id:user._id,
@@ -73,18 +72,19 @@ loginRouter.post('/login', async (req, res)=>{
 
 
 
-refreshToken.post('/refresh_token', verifyRefreshToken, refreshErrorHandler, (req, res)=>{
+refreshToken.get('/refresh_token', verifyRefreshToken, refreshErrorHandler, (req, res)=>{
+    console.log('redirected');
     const access_token = jwt.sign({id: req.body.user.id, 
-                                    jti:crypto.randomUUID()}, process.env.ACCESS_TOKEN_SECRET, {expiresIn:'1800000'});
+                                    jti:crypto.randomUUID()}, process.env.ACCESS_TOKEN_SECRET, {expiresIn:'2m'});
     //here the request contain the data of the user|| req.params.id could also be used depending on where the frontend has stored the id, URI or req body
 
-    res.clearCookie('access_token', { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: 'None' });
 
     res.cookie('access_token', access_token, {
-        maxAge:1800000, //1h
-        sameSite:'None', //Against CSRF Attacks
         httpOnly: true, //Aigainst XSS Attacks: never accessible via js
-        secure: process.env.NODE_ENV === "production" //it must be false for localhost
+        secure: process.env.NODE_ENV === "production", //it must be false for localhost
+        sameSite: "Lax",       
+        path: "/",
+        maxAge: 1000 * 60 * 30
     });
 
     res.status(201).send('new access_token created');

@@ -1,6 +1,5 @@
 const cookieExtractor = function(req, name) {
     var token = null;
-    console.log(req.cookies);
     if (name === 'access_token'){
         try{
             token = req.cookies.access_token;
@@ -16,8 +15,7 @@ const cookieExtractor = function(req, name) {
         }
     
     }
-    console.log("###########################");
-    console.log(token);
+
     return token;
     
 };

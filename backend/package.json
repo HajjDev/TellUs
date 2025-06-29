@@ -22,6 +22,7 @@
     "expressjs": "^1.0.1",
     "intl-tel-input": "^25.3.1",
     "l": "^0.6.0",
+    "method-override": "^3.0.0",
     "mongodb": "^6.17.0",
     "mongoose": "^8.16.0",
     "morgan": "^1.10.0",

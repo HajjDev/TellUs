@@ -17,13 +17,13 @@ app.use(express.json());
 app.use(morgan('dev'));
 app.use(cookies());
 app.use(cors({
-    origin:'http://127.0.0.1:5500', //accept request comming from frontend
-    credentials: true //allow cookie
+    origin:['http://127.0.0.1:5500', 'http://localhost:5500'], 
+    credentials: true
 }));
 app.use('/api/auth', loginRouter);
-app.use('/api/refresh_token', refreshToken);
+app.use('/api/token', refreshToken);
 app.use('/api/register', registerRouter);
-app.use('/', testRoute);
+app.use('/test', testRoute);
 
 
 

@@ -5,11 +5,6 @@ const {verifyAccessToken, accessErrorHandler} = require('../middleware/auth.js')
 
 const testRoute = express.Router();
 
-testRoute.use(cors({
-    origin:'http://127.0.0.1:5500', //accept request comming from frontend
-    credentials: true //allow cookie
-}));
-
 testRoute.use(express.json());
 
 testRoute.use(morgan('dev'));

@@ -17,18 +17,22 @@ const verifyRefreshToken = async (req, res, next)=>{
         const client = await connectRedis();
         const token = cookieExtractor(req, 'refresh_token');
 
-        if (!token){
-            return res.redirect('http://localhost:3001/api/auth/login');
-        }
 
         try{
-            
-            decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+            if (!token){
+                throw {name: 'noTokenError',
+                    message:'No refresh token'
+                }
+            }
+
+            const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
 
             if (decoded && await client.get(decoded.jti)){
                 throw {name:'TokenBlacklistedError', message: 'jwt replaying'};
             }
 
+            req.user = docoded;
+            
             next();
 
         }catch(err){
@@ -40,12 +44,12 @@ const verifyRefreshToken = async (req, res, next)=>{
 
 
 const refreshErrorHandler = async (err, req, res, next)=>{
-            const client = connectRedis();
-            const token = cookieExtractor(req, 'refresh_token');
+            const client = await connectRedis();
 
-            res.clearCookie('refresh_token', { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: 'None' });
+            res.clearCookie('refresh_token', { httpOnly: true, secure: process.env.NODE_ENV === "production",  path:'/', sameSite:'Lax'});
 
             if (err.name == 'TokenExpiredError'){
+                const token = cookieExtractor(req, 'refresh_token');
                 decoded = jwt.decode(token);
                 await client.set(decoded.jti, 'blacklisted');
             }
@@ -58,14 +62,21 @@ const refreshErrorHandler = async (err, req, res, next)=>{
 
 const verifyAccessToken = async (req, res, next)=>{
         const client = await connectRedis();
-        console.log(req.cookies);
-        const token = cookieExtractor(req, 'refresh_token');
-        try{
-            const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        const token = cookieExtractor(req, 'access_token');
 
+        try{
+
+            if (!token){
+                throw {name: 'noTokenError',
+                    message:'No access token'
+                }
+            }
+
+            const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
             if (decoded && await client.get(decoded.jti)){
                 throw {name:'TokenBlacklistedError',    message: 'jwt replaying'};
             }
+
 
             next();
 
@@ -77,19 +88,25 @@ const verifyAccessToken = async (req, res, next)=>{
 
 const accessErrorHandler = async (err, req, res, next)=>{
         const client = await connectRedis();
-        const token = cookieExtractor(req, 'refresh_token');
+        
+        res.clearCookie('access_token', { httpOnly: true, secure: process.env.NODE_ENV === "production", path:'/', sameSite:'Lax'});
 
-        res.clearCookie('access_token', { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: 'None' });
-
-        if (err.name == 'TokenExpiredError'){
+        if (err.name === 'TokenExpiredError'){
+            const token = cookieExtractor(req, 'access_token');
             const decoded = jwt.decode(token);
+            
             await client.set(decoded.jti, 'blacklisted');
-            return res.redirect('http://localhost:3001/api/auth/refresh_token');
+            
+            return res.redirect('http://localhost:3001/api/token/refresh_token');
 
         }
 
+        if (err.name == 'noTokenError'){
+            return res.redirect('http://localhost:3001/api/token/refresh_token');
+        }
+
         
-        return res.redirect('http://localhost:3001/api/auth/login');
+        return res.status(200).send('You have to login');
 
     }
 
