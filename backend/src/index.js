@@ -5,6 +5,7 @@ const User = require("../models/user");
 const {loginRouter, refreshToken} = require("../route/auth");
 const registerRouter = require("../route/register");
 const testRoute = require('../route/test');
+const resetRoute = require("../route/reset");
 const morgan = require('morgan');
 const cookies = require('cookie-parser');
 const cors = require('cors');
@@ -23,6 +24,7 @@ app.use(cors({
 app.use('/api/auth', loginRouter);
 app.use('/api/token', refreshToken);
 app.use('/api/register', registerRouter);
+app.use('/api/reset', resetRoute);
 app.use('/test', testRoute);
 
 

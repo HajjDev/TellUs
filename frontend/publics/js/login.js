@@ -36,6 +36,10 @@ document.getElementById("newAccRegister").addEventListener('click', () => {
     window.location.href = "../html/register/register_personal.html";
 });
 
+document.getElementById("forgotPassword").addEventListener('click', () => {
+    window.location.href = "../html/email_verification.html";
+});
+
 const button = document.getElementById('send_test');
 
 button.addEventListener('click', async ()=>{
