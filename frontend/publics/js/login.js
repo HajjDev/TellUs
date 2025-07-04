@@ -24,6 +24,7 @@ document.getElementById("login").addEventListener('click', async ()=>{
         };
 
         const json = await response.json();
+        localStorage.setItem("user", JSON.stringify(json.user));
         console.log(response);
         console.log(json);
 
@@ -64,4 +65,8 @@ button.addEventListener('click', async ()=>{
         console.error(error.message);
     }
 
+});
+
+document.getElementById('enable_mfa').addEventListener('click', ()=>{
+    window.location.href = "../html/enable_mfa.html";
 });

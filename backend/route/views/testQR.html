@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <img src="http://localhost:3001/api/mfa/enable_totp" width="200px" height="200px"/>
+    <label for="pin">PIN:</label><br>
+    <input id="token" name="token" type="text" size="6" maxlength="6"/>
+    <button id="send_code">Send the code</button>
+    <script>
+      document.getElementById("send_code").addEventListener('click', async ()=>{
+        const token = document.getElementById("token").value;
+
+        const user = JSON.parse(localStorage.getItem('user'));
+
+        const url = "http://localhost:3001/api/mfa/verify_totp";
+        try{
+            const response = await fetch(url, {
+              method:"POST",
+              headers:{
+                "Content-Type":"application/json"
+              },
+
+              body:JSON.stringify({
+                id:user.id,
+                token:token
+              })
+
+            });
+
+            if (!response){
+              console.log(response.message)
+            }
+
+
+        }catch(err){
+          console.error(err.message);
+        }
+
+      });
+    </script>
+  </body>
+</html>

@@ -17,7 +17,9 @@ const userSchema = new mongoose.Schema({
     phoneNumber: {type: String, required: true},
     password: {type: String, required: true},
     verified: Boolean,
-    MFA_enabled:{type:Boolean, default:false},
+    secret:String,
+    OTP_enabled:{type:Boolean, default:false},
+    TOPT_enabled:{type:Boolean, default:false},
     locked:{type:Boolean, default:false}
 });
 

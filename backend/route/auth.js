@@ -31,10 +31,13 @@ loginRouter.post('/login', async (req, res)=>{
             res.status(400).send("false credentials");
         }
 
+        
         /// If the user is not verified, they can't log-in
-        if (!user.verified) {
-            res.status(400).send("Not verified");
-        }
+        // if (!user.verified) {
+        //     res.status(400).send("Not verified");
+        // }
+
+
 
         //this session creation send automatically a cookie to the client containing the sessionID
 
@@ -80,7 +83,7 @@ loginRouter.post('/login', async (req, res)=>{
 refreshToken.get('/refresh_token', verifyRefreshToken, refreshErrorHandler, (req, res)=>{
     console.log('redirected');
     const access_token = jwt.sign({id: req.user.id, 
-                                    jti:crypto.randomUUID()}, process.env.ACCESS_TOKEN_SECRET, {expiresIn:'1m'});
+                                    jti:crypto.randomUUID()}, process.env.ACCESS_TOKEN_SECRET, {expiresIn:'30m'});
     //here the request contain the data of the user|| req.params.id could also be used depending on where the frontend has stored the id, URI or req body
 
 
