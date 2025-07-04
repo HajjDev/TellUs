@@ -6,8 +6,12 @@
         <title>TellUs - Enable TOTP</title>
     </head>
     <body>
-        <img src="http://localhost:3001/api/mfa/enable_totp" >
+        <div class="qrcode"></div>
         <button id="enable_totp">GET QRCode</button>
+        <div>
+            <input id="token" name="token" size="6" maxlength="6"/>
+            <button id="send_token">Send code</button>
+        </div>
         <script src="../js/enable_totp.js"></script>
     </body>
 </html>

@@ -1,7 +1,6 @@
-document.getElementById('enable_totp').addEventListener('click', async ()=>{
+document.getElementById("receive_token").addEventListener('click', async ()=>{
     try{
-
-        const url = "http://localhost:3001/api/mfa/enable_totp";
+        const url = "http://localhost:3001/api/mfa/enable_otp";
 
         const user = JSON.parse(localStorage.getItem('user'));
 
@@ -14,6 +13,7 @@ document.getElementById('enable_totp').addEventListener('click', async ()=>{
             body:JSON.stringify({
                 id:user.id
             }),
+
             credentials:"include" //allow cookie
         });
 
@@ -21,21 +21,17 @@ document.getElementById('enable_totp').addEventListener('click', async ()=>{
             throw new Error(`Response status: ${response.status}`);
         };
 
-        
-        const json = await response.json();
-
-        const QRCode = document.querySelector(".qrcode");
-        QRCode.innerHTML = `<img src="http://localhost:3001/api/mfa/data/${json.filename}">`;
-        
+    
 
     }catch(error){
         console.error(error.message);
     }
 });
 
-document.getElementById('send_token').addEventListener("click", async ()=>{
+
+document.getElementById("send_token").addEventListener("click", async ()=>{
     try{
-        const url = "http://localhost:3001/api/mfa/verify_totp";
+        const url = "http://localhost:3001/api/mfa/verify_otp";
 
         const user = JSON.parse(localStorage.getItem('user'));
 
@@ -59,11 +55,8 @@ document.getElementById('send_token').addEventListener("click", async ()=>{
             throw new Error(`Response status: ${response.status}`);
         };
 
-        
-        const json = await response.json();
-        console.log(json);
 
     }catch(error){
         console.error(error.message);
     }
-});
+})

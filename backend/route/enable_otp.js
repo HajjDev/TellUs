@@ -10,7 +10,7 @@ router.use(verifyAccessToken);
 router.use(accessErrorHandler);
 
 
-router.get('/enable_otp', async (req, res)=>{
+router.post('/enable_otp', async (req, res)=>{
     try{
         const userId = req.body.id;
         let user = await User.findOne({_id:userId});
@@ -35,10 +35,12 @@ router.get('/enable_otp', async (req, res)=>{
             from:process.env.AUTH_MAIL,
             to:user.email,
             subject:"TellUs connection code",
-            body:`<p>Hello there,</p></br><p>Your verification code is : ${token}</p>`
+            html:`<p>Hello there,</p></br><p>Your verification code is : ${token}</p>`
         };
 
         await transporter.sendMail(mailOptions);
+
+        return res.status(200).send("mail sent");
 
     }catch(err){
         console.error(err.message);
@@ -78,3 +80,4 @@ router.post('/verify_otp', async (req, res)=>{
     }
 });
 
+module.exports = router;

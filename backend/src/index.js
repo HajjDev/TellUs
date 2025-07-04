@@ -31,7 +31,7 @@ app.use('/api/token', refreshToken);
 app.use('/api/register', registerRouter);
 app.use('/api/reset', resetRoute);
 app.use('/test', testRoute);
-//app.use('/api/mfa', enable_otp);
+app.use('/api/mfa', enable_otp);
 app.use('/api/mfa', enable_totp);
 
 

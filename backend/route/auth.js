@@ -33,9 +33,9 @@ loginRouter.post('/login', async (req, res)=>{
 
         
         /// If the user is not verified, they can't log-in
-        // if (!user.verified) {
-        //     res.status(400).send("Not verified");
-        // }
+        if (!user.verified) {
+            res.status(400).send("Not verified");
+        }
 
 
 

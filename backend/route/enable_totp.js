@@ -3,20 +3,21 @@ const speakeasy = require('speakeasy');
 const path = require('path');
 const User = require('../models/user');
 const {verifyAccessToken, accessErrorHandler} = require('../middleware/auth');
+const { v4 : uuidv4 } = require('uuid');
 const QRCode = require('qrcode');
 
 const router = express.Router();
 
 router.use(verifyAccessToken);
 router.use(accessErrorHandler);
-router.use(express.static(path.join(__dirname, 'views')));
+router.use("/data", express.static(path.join(__dirname, 'views')));
 
 
-const Generator = async (text) => {
-    return await QRCode.toFile(path.join(__dirname, "views/qrcode.svg"), text, function (err) {
+const Generator = async (text, filename) => {
+    return await QRCode.toFile(path.join(__dirname, `views/${filename}.svg`), text, function (err) {
     if (err) throw err
     console.log('done')
-    })
+    });
 }
 
 
@@ -32,17 +33,20 @@ router.post('/enable_totp', async (req, res) =>{
 
         const secret = speakeasy.generateSecret();
         user.secret = secret.base32;
-        user.TOTP_secret = true;
-        user.OPT_secret = false;
-        await user.save();    
-        await Generator(secret.otpauth_url);
+        user.TOTP_enabled = true;
+        user.OTP_enabled = false;
+        await user.save();  
+        
+        const filename = uuidv4();
+        await Generator(secret.otpauth_url, filename);
 
-        return res.sendFile(path.join(__dirname, '/views/qrcode.svg')); 
+        return res.json({filename:`${filename}.svg`});
 
     }catch(err){
-        console.error(err);
+        console.error(err.message);
         return res.status(422).send('invalid input');
     }
+
 });
 
 router.post('/verify_totp', async (req, res)=>{
@@ -55,19 +59,19 @@ router.post('/verify_totp', async (req, res)=>{
         throw new Error("User Not Found.");
         }
 
-        if (!TOTP_enabled){
+        if (!user.TOTP_enabled){
             throw new Error("Enable TOTP first.");
         }
 
         const verified = speakeasy.totp.verify({
-            secret: totpObject.totpSecret,
+            secret: user.secret,
             encoding: 'base32',
             token,
             window:1
         });
 
         if (verified) {
-            return res.send('MFA verified');
+            return res.status(200).send('MFA verified');
         }else{
             return res.status(400).send('Invalid entry. Try again');
         }
