@@ -21,8 +21,13 @@ document.getElementById("send-link").addEventListener("click", async () => {
         };
 
         const json = await response.json();
+        localStorage.setItem('mailVerification', JSON.stringify({
+            json
+        }));
         console.log(json);
     } catch(err) {
         console.log(err.message);
     };
+
+    window.location.href = "../html/reset_password.html";
 })

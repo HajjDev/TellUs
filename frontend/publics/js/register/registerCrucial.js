@@ -17,19 +17,12 @@ document.getElementById("register").addEventListener('click', async ()=>{
     try{
         const url = "http://localhost:3001/api/register/signup";
         const userName = document.getElementById("userName").value;
-        console.log(userName);
         const displayName = document.getElementById("displayName").value;
-        console.log(displayName);
         const email = document.getElementById("email").value;
-        console.log(email);
         const phoneNumber = document.getElementById("phone").value;
-        console.log(phoneNumber);
         const password = document.getElementById("password").value;
-        console.log(password);
         const reEnteredPassword = document.getElementById("password-confirmation").value;
-        console.log(reEnteredPassword);
         const personalInfo = JSON.parse(localStorage.getItem("personalInfo")) || {};
-        console.log(personalInfo);
         try {
             const response = await fetch(url, {
                 method: 'POST',

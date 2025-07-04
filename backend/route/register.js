@@ -5,28 +5,9 @@ const registerPersonalCheck = require('../middleware/register/registerPersonalCh
 const registerCrucialCheck = require('../middleware/register/registerCrucialCheck');
 const User = require('../models/user');
 const UserVerification = require('../models/userVerification');
-const nodemailer = require('nodemailer');
 const {v4: uuidv4} = require('uuid');
+const transporter = require("../config/transporter");
 require('dotenv').config();
-
-// Initializing transporter to send emails
-let transporter = nodemailer.createTransport({
-    service:'gmail',
-    auth: {
-        user: process.env.AUTH_MAIL, // sender mail
-        pass: process.env.AUTH_PASS // GMAIL App Key
-    }
-})
-
-// Before proceeding, we verify if the Key provided is valid
-transporter.verify((err, succ) => {
-    if (err) {
-        console.log(err)
-    } else {
-        console.log(`Can send emails (Verified): ${succ}`);
-        console.log(`Ready to send emails from ${process.env.AUTH_MAIL}`);
-    }
-})
 
 const sendVerificationEmail = async ({_id, email}, res) => {
     const url = "http://localhost:5500/";
@@ -129,7 +110,7 @@ router.post("/signup", registerCheck, async (request, res) => {
             email,
             phoneNumber,
             password,
-            verified: false
+            verified: false,
         });
 
         const registeredUser = await newUser.save(); // We save the user (temporarily) after they provided the information

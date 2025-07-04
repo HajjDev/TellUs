@@ -18,8 +18,9 @@ const userSchema = new mongoose.Schema({
     password: {type: String, required: true},
     verified: Boolean,
     secret:String,
+    resetPasswordSecret: String,
     OTP_enabled:{type:Boolean, default:false},
-    TOPT_enabled:{type:Boolean, default:false},
+    TOTP_enabled:{type:Boolean, default:false},
     locked:{type:Boolean, default:false}
 });
 
