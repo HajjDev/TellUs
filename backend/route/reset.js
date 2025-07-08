@@ -63,7 +63,7 @@ const sendSuccessfulMail = async (email) => {
         from: process.env.AUTH_MAIL,
         to: email, // User's registered email
         subject: "TellUs - Password Changed Successfully",
-        html: `<p>Dear,</p><p>Your <b>password has been changed</b> successfully!</p><p>Please make sure to log in <a href='http://localhost:5500/frontend/publics/html/login.html'>here</a></p><h4>If you did not make this change, please contact support immediately!</h4>`,
+        html: `<p>Dear,</p><p>Your <b>password has been changed</b> successfully!</p><p>Please make sure to log in <a href='http://localhost:5173/login'>here</a></p><h4>If you did not make this change, please contact support immediately!</h4>`,
     };
 
     await transporter.sendMail(mailOptions); // Send the mail
@@ -146,7 +146,7 @@ router.post("/password-change", async (req, res) => {
                 const hashedPassword = await bcrypt.hash(password, 12);
                 await user.updateOne({password: hashedPassword});
                 sendSuccessfulMail(email); // After these steps, we send the successful mail
-                res.json({message: 'User password Updated Successfully'});
+                res.json({message: 'User password Updated Successfully, redirecting in 5 seconds'});
             } else {
                 res.json({message: 'User not registered'});
             }
