@@ -49,7 +49,6 @@ router.post('/enable_otp', async (req, res)=>{
 
 router.post('/verify_otp', async (req, res)=>{
     
-
     try{
         const userId = req.body.id;
         const token = req.body.token;
