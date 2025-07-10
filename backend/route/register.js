@@ -10,7 +10,7 @@ const transporter = require("../config/transporter");
 require('dotenv').config();
 
 const sendVerificationEmail = async ({_id, email}, res) => {
-    const url = "http://localhost:5500/";
+    const url = "http://localhost:5173/";
     const uniqueString = uuidv4() + _id; // The unique string generated everytime a user want to register
 
     // Options used in the mail
@@ -18,7 +18,7 @@ const sendVerificationEmail = async ({_id, email}, res) => {
         from: process.env.AUTH_MAIL,
         to: email, // User's registered email
         subject: "TellUs - Verify Your email Address",
-        html: `<p>Welcome,</p><p>Please verify your email address to complete the sign up process and login to your account.</p><p>This link expires in <b>6 hours</b>.</p><p>Press <a href=${url + "frontend/publics/html/verify_credentials.html?userId=" + _id + "&token=" + uniqueString}>here</a> to proceed./</p>`,
+        html: `<p>Welcome,</p><p>Please verify your email address to complete the sign up process and login to your account.</p><p>This link expires in <b>6 hours</b>.</p><p>Press <a href=${url + "verify-credentials?userId=" + _id + "&token=" + uniqueString}>here</a> to proceed./</p>`,
         
     };
 
@@ -66,7 +66,7 @@ router.get("/verifyAccount/:userId/:uniqueString", async (req, res) => {
                     // We change the status of verified to true if everything is alright, then we delete the temporary user in the database
                     await User.updateOne({_id: userId}, {verified: true});
                     await UserVerification.deleteOne({userId});
-                    res.json({message: "<p>Email has been verified, you can now <a href='http://localhost:5500/frontend/publics/html/login.html'>log in</a></p>"});
+                    res.json({message: "Email has been verified, you can now log in. Redirecting in 5 seconds..."});
                 } else {
                     res.json({message: "Error while checking for existing user verification, invalid details"});
                 }
