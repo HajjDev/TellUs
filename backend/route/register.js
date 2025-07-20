@@ -18,7 +18,7 @@ const sendVerificationEmail = async ({_id, email}, res) => {
         from: process.env.AUTH_MAIL,
         to: email, // User's registered email
         subject: "TellUs - Verify Your email Address",
-        html: `<p>Welcome,</p><p>Please verify your email address to complete the sign up process and login to your account.</p><p>This link expires in <b>6 hours</b>.</p><p>Press <a href=${url + "verify-credentials?userId=" + _id + "&token=" + uniqueString}>here</a> to proceed./</p>`,
+        html: `<p>Welcome,</p><p>Please verify your email address to complete the sign up process and login to your account.</p><p>This link expires in <b>6 hours</b>.</p><p>Press <a href=${url + "register/verify-credentials?userId=" + _id + "&token=" + uniqueString}>here</a> to proceed.</p><p>TellUs.</p>`,
         
     };
 
@@ -42,9 +42,26 @@ const sendVerificationEmail = async ({_id, email}, res) => {
     }
 };
 
-router.get("/verifyAccount/:userId/:uniqueString", async (req, res) => {
-    let {userId, uniqueString} = req.params; // We get the user's ID and uniqueString
+const sendSuccessmail = async (user) => {
+    const loginUrl = "http://localhost:5173/login";
+    const mailOptions = {
+        from: process.env.AUTH_MAIL,
+        to: user.email, // User's registered email
+        subject: "TellUs - Email Verified",
+        html: `<p>Dear ${user.userName},</p><p>Your email has been verified, you can now <a href=${loginUrl}>log-in.</a></p><p>TellUs.</p>`,
+    };
 
+    try {
+        await transporter.sendMail(mailOptions);
+    } catch (err) {
+        console.error(err.message);
+    }
+};
+
+router.get("/verify-credentials/:userId/:uniqueString", async (req, res) => {
+    console.log("hihihihihihihihihihih");
+    let {userId, uniqueString} = req.params; // We get the user's ID and uniqueString
+    console.log(userId, uniqueString);
     try {
         // We try to find if the user's is actually registered
         const userIdVerification = await UserVerification.find({userId});
@@ -66,6 +83,7 @@ router.get("/verifyAccount/:userId/:uniqueString", async (req, res) => {
                     // We change the status of verified to true if everything is alright, then we delete the temporary user in the database
                     await User.updateOne({_id: userId}, {verified: true});
                     await UserVerification.deleteOne({userId});
+                    await sendSuccessmail(User.findOne({_id: userId}));
                     res.json({message: "Email has been verified, you can now log in. Redirecting in 5 seconds..."});
                 } else {
                     res.json({message: "Error while checking for existing user verification, invalid details"});

@@ -1,6 +1,5 @@
 const verifyCredentials = async (userId, token) => {
-    const url = `http://localhost:3001/api/register/verifyAccount/${userId}/${token}`;
-
+    const url = `http://localhost:3001/api/register/verify-credentials/${userId}/${token}`;
     try {
         const response = await fetch(url, {
             method: "GET",

@@ -4,13 +4,13 @@ const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 require('dotenv').config();
-
+const {verifyCaptcha} = require("../middleware/recaptcha");
 const loginRouter = express.Router();
 const logoutRouter = express.Router();
 
 
 
-loginRouter.post('/login', async (req, res)=>{
+loginRouter.post('/login', verifyCaptcha, async (req, res)=>{
     try{
         const input = req.body;
         const user = await User.findOne({ 
@@ -30,7 +30,7 @@ loginRouter.post('/login', async (req, res)=>{
         }
 
         
-        /// If the user is not verified, they can't log-in
+        // If the user is not verified, they can't log-in
         if (!user.verified) {
             return res.status(400).send("Not verified");
         }

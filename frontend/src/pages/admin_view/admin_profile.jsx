@@ -14,5 +14,4 @@ function AdminProfile({ authorized }){
     )
 }
 
-
 export default AdminProfile

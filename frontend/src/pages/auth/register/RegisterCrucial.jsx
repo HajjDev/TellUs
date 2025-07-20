@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Outlet } from "react-router-dom";
 import registerCrucial from "../../../requests/auth/register/registerCrucial";
 import RegisterCrucialForm from "../../../components/auth/register/RegisterCrucialForm";
 

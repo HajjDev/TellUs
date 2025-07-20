@@ -15,7 +15,7 @@ const RegisterPersonal = () => {
     const nextPage = async () => {
         try {
             await registerPersonal(firstName, middleName, surName, dateOfBirth, gender);
-            navigate('/register-crucial');
+            navigate('/register/crucial-info');
         } catch(err) {
             console.error(err.message);
         }

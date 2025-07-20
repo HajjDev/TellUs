@@ -1,5 +1,6 @@
 const express = require('express');
 const speakeasy = require('speakeasy');
+const path = require('path');
 const QRCode = require('qrcode');
 const User = require('../models/user');
 const {verifyAccessToken, accessErrorHandler, verifyRefreshToken, refreshErrorHandler, updateToken} = require('../middleware/auth');

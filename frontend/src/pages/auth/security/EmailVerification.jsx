@@ -9,7 +9,7 @@ const EmailVerification = () => {
     const verified = async () => {
         try {
             await emailVerification(email);
-            navigate("/resetPassword");
+            navigate("/password/verify");
         } catch(err) {
             console.error(err.message);
         }

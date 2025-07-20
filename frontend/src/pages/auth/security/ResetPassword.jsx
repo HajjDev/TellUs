@@ -11,7 +11,7 @@ const ResetPassword = () => {
         try {  
             const result = resetPassword(code, email);
             if (result) {
-                navigate('/changePassword');
+                navigate('/password/change');
             } else {
                 console.log("error, incorrect credentials");
             }
