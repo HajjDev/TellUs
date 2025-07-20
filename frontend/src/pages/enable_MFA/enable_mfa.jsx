@@ -9,6 +9,7 @@ import GetEmailToken from '../../requests/enable_MFA/getEmailToken'
 function EnableMFA(){
     const [token, setToken] = useState("");
     const QRCode = useRef()
+    const mess = useRef()
 
     const sendTokenHandlerOTP = async ()=>{
         await SendTokenOTP(token)
@@ -20,10 +21,12 @@ function EnableMFA(){
 
     const getQRCodeHandler = async()=>{
         QRCode.current.innerHTML = await getQRCode()
+        
     }
 
     const getEmailTokenHandler = async ()=>{
         await GetEmailToken()
+        mess.current.innerText = "mail sent"
     }
     return (
         <>
@@ -42,6 +45,7 @@ function EnableMFA(){
             </div>
             <div>
                 <p>CLick to get your code by email</p>
+                <p ref={mess}></p>
                 <button onClick={getEmailTokenHandler}>Get my code</button>
                 <div>
                     <input 

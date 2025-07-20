@@ -37,12 +37,28 @@ loginRouter.post('/login', async (req, res)=>{
 
         if (user.OTP_enabled){
             req.user = user;
-            return res.redirect('http://localhost:3001/api/otp_login');
+            res.cookie('id', userId, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production", 
+                sameSite: "Lax",       
+                path: "/",
+                maxAge: 1000 * 60 * 30
+            });
+            
+            return res.redirect('http://localhost:3001/api/auth/otp_login');
         }
 
         if (user.TOP_enabled){
             req.user = user;
-            return res.redirect('http://localhost:3001/api/totp_login');
+            res.cookie('id', userId, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production", 
+                sameSite: "Lax",       
+                path: "/",
+                maxAge: 1000 * 60 * 30
+            });
+
+            return res.status(200).send('Credentials verified. waiting for verification code');
         }
 
         //this session creation send automatically a cookie to the client containing the sessionID

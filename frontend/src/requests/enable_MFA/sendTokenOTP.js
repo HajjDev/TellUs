@@ -1,8 +1,6 @@
-async function SendTokenOTP(){
+async function SendTokenOTP(token){
     try{
         const url = "http://localhost:3001/api/mfa/enable_otp";
-
-        const user = JSON.parse(localStorage.getItem('user'));
 
 
         const response = await fetch(url, {
@@ -11,7 +9,7 @@ async function SendTokenOTP(){
                 "Content-Type":"application/json"
             },
             body:JSON.stringify({
-                id:user.id
+                token
             }),
 
             credentials:"include" //allow cookie

@@ -1,34 +1,35 @@
-async function getQRCode(){
+async function sendTokenAtLogin(token){
     try{
 
-        const url = "http://localhost:3001/api/mfa/enable_totp";
+        const url = "http://localhost:3001/api/auth/mfa_login";
 
-        const user = JSON.parse(localStorage.getItem('user'));
-
-
+        
         const response = await fetch(url, {
             method:"POST",
             headers:{
                 "Content-Type":"application/json"
             },
 
-            credentials:"include" //allow cookie
+            body:JSON.stringify({
+                token
+            }),
+
+            credentials:"include" //allow cookie containing the user id
         });
 
         if (!response.ok) {
             throw new Error(`Response status: ${response.status}`);
         };
 
-        
         const json = await response.json();
 
-        return json.tag;
-        
+        console.log(json);
 
     }catch(error){
         console.error(error.message);
-        return null;
     }
 }
 
-export default getQRCode
+
+
+export default sendTokenAtLogin;

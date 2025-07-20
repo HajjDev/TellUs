@@ -4,7 +4,7 @@ const QRCode = require('qrcode');
 const User = require('../models/user');
 const {verifyAccessToken, accessErrorHandler, verifyRefreshToken, refreshErrorHandler, updateToken} = require('../middleware/auth');
 const { v4 : uuidv4 } = require('uuid');
-
+const path = require("path");
 
 const router = express.Router();
 const middlewares = [verifyAccessToken, accessErrorHandler, verifyRefreshToken, refreshErrorHandler, updateToken];
@@ -14,13 +14,16 @@ router.use("/data", express.static(path.join(__dirname, 'views')));
 
 router.post('/enable_totp', async (req, res) =>{
     try{
-        const userId = req.body.id;
+        const userId = req.user.id;
         const user = await User.findOne({_id:userId});
 
         if (!user){
             return res.status(404).send('User Not found');
         }
 
+        if (!user.verified){
+            return res.status(400).send("Not verified");
+        }
 
         const secret = speakeasy.generateSecret();
         user.secret = secret.base32;
@@ -31,7 +34,7 @@ router.post('/enable_totp', async (req, res) =>{
         
         const qrcode = await QRCode.toDataURL(secret.otpauth_url);
 
-        return res.json({tag:`<img src="${filename}" />`});
+        return res.json({tag:`<img src="${qrcode}" />`});
 
     }catch(err){
         console.error(err.message);
@@ -43,8 +46,10 @@ router.post('/enable_totp', async (req, res) =>{
 router.post('/verify_totp', async (req, res)=>{
     
     try{
-        const { token, userId } = req.body;
-        const user = await User.findOne({id: userId});
+        const userId = req.user.id;
+        const token = req.body.token;
+        console.log(userId);
+        const user = await User.findOne({_id: userId});
 
         if (!user){
             throw new Error("User Not Found.");

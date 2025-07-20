@@ -17,7 +17,11 @@ router.post('/otp_login',async (req, res)=>{
         let user = await User.findOne({_id:userId});
         if (!user) {
             throw new Error('User not registered');
-        }        
+        }
+        
+        if (!user.verified){
+            return res.status(400).send("Not verified");
+        }
 
         const secret = speakeasy.generateSecret({length: 20});
         user.secret = secret.base32;
@@ -37,7 +41,15 @@ router.post('/otp_login',async (req, res)=>{
 
         await transporter.sendMail(mailOptions);        
 
-        return res.status(200).send("mail sent");
+        res.cookie('id', userId, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production", 
+                sameSite: "Lax",       
+                path: "/",
+                maxAge: 1000 * 60 * 30
+        });
+
+        return res.status(200).send('Credentials verified. waiting for verification code');
 
     }catch(err){
         res.status(422).send("Something went wrong");
@@ -46,67 +58,6 @@ router.post('/otp_login',async (req, res)=>{
     }
 });
 
-
-router.post('/otp_verification', async (req, res)=>{
-    try{
-        const userId = req.user.id;
-        const token = req.body.token;
-        let user = await User.findOne({_id:userId});
-
-        if (!user) {
-            throw new Error('User not registered');
-        }        
-
-        const verified = speakeasy.totp.verify({
-            secret:user.secret,
-            encoding:'base32',
-            token,
-            window:1
-        });
-
-        if (verified){
-            const access_token = jwt.sign({id: user._id,
-                                        jti:crypto.randomUUID()}, process.env.ACCESS_TOKEN_SECRET, {expiresIn:'30m'}); //1800000
-
-            const refresh_token = jwt.sign({id: user._id, 
-                                            jti:crypto.randomUUID()}, process.env.REFRESH_TOKEN_SECRET, {expiresIn:'90 days'});//90 days
-
-            res.cookie("access_token", access_token, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production", 
-                sameSite: "Lax",       
-                path: "/",
-                maxAge: 1000 * 60 * 30
-            });
-
-
-            res.cookie("refresh_token", refresh_token, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",         
-                sameSite: "Lax",       
-                path: "/",
-                maxAge: 1000 * 60 * 30 * 2
-            });
-
-            
-            res.status(201).json({message:"successfully connected", user:{
-                id:user._id,
-                username:user.userName
-                //role:user.role
-            }});
-
-            return res.status(200).send('user loged');
-        }else{
-            return res.status(400).send('Bad request');
-        }
-
-    }catch(err){
-        res.status(422).send("Something went wrong");
-        console.error(err.message);
-    }
-
-
-});
 
 
 module.exports = router;

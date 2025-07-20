@@ -12,7 +12,7 @@ router.use(middlewares);
 
 router.post('/enable_otp', async (req, res)=>{
     try{
-        const userId = req.body.id;
+        const userId = req.user.id;
         let user = await User.findOne({_id:userId});
         
         if (!user){
@@ -51,7 +51,7 @@ router.post('/enable_otp', async (req, res)=>{
 router.post('/verify_otp', async (req, res)=>{
     
     try{
-        const userId = req.body.id;
+        const userId = req.user.id;
         const token = req.body.token;
         let user = await User.findOne({_id:userId});
 

@@ -1,6 +1,8 @@
 import {Outlet, Link} from "react-router-dom"
 
-function AdminProfile(){
+function AdminProfile({ authorized }){
+
+    
     return (
         <>
             <div>

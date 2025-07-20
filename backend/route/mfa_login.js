@@ -6,14 +6,18 @@ const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 
-router.post('/totp_login', async (req, res)=>{
+router.post('/mfa_login', async (req, res)=>{
     try{
-        const userId = req.user._id;
+        const userId = req.cookies.id;
         const user = await User.findOne({id: userId});
         const token = req.body.token;
 
         if (!user){
             throw new Error("User Not Found.");
+        }
+
+        if (!user.verified){
+            return res.status(400).send("Not verified");
         }
 
         const verified = speakeasy.totp.verify({

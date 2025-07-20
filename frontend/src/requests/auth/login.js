@@ -22,8 +22,7 @@ async function sendData(ename, pswd){
             throw new Error(`Response status: ${response.status}`);
         };
 
-        const json = await response.json();
-        localStorage.setItem("user", JSON.stringify(json.user));
+        
 
         console.log(json);
 
