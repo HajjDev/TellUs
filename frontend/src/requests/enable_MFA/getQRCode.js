@@ -24,7 +24,7 @@ async function getQRCode(){
         
         const json = await response.json();
 
-        return `<img src="http://localhost:3001/api/mfa/data/${json.filename}"/>`;
+        return json.tag;
         
 
     }catch(error){

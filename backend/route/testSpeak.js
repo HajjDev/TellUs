@@ -1,4 +1,5 @@
 const speakeasy = require('speakeasy');
+const QRCode = require('qrcode');
 
 var secret = speakeasy.generateSecret({length: 20});
 
@@ -8,7 +9,19 @@ var token = speakeasy.totp({
   step:10
 });
 
-console.log(secret.otpauth_url);
+
+async function display(sec){
+  img.code = await QRCodeGen(sec);
+  console.log(img.code);
+}
+
+
+display(secret.otpauth_url);
+
+
+
+// QRCodeGen(secret.otpauth_url);
+// console.log(img);
 
 function verify(){
     const tokenValidates = speakeasy.totp.verify({
@@ -22,4 +35,4 @@ function verify(){
     console.log(tokenValidates);
 }
 
-//const Timeout = setTimeout(verify, 11000);
+//const Timeout = setTimeout(()=>{console.log(img.code);}, 2000);
