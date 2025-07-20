@@ -19,15 +19,14 @@ const App = () => {
       <Route path="/" element={<Layout/>}>
           <Route index element={<Home />}/>
           <Route path='login' element={<LoginPage/>}/>
-          <Route path="/register" element={<RegisterPersonal />}>
-            <Route path="crucial-info" element={<RegisterCrucial />} />
-            <Route path="emailVerification" element={<EmailVerification />} />
-          </Route>
+          <Route path="register/personal-info" element={<RegisterPersonal />} />
+          <Route path="register/crucial-info" element={<RegisterCrucial />} />
+          <Route path="register/verify-credentials" element={<VerifyCredentials />} />
       </Route>
       
-      <Route path="/verify-credentials" element={<VerifyCredentials />} />
-      <Route path="/resetPassword" element={<ResetPassword />} />
-      <Route path="/changePassword" element={<ResetPasswordChange />} />
+      <Route path="password/reset" element={<EmailVerification />} />
+      <Route path="password/verify" element={<ResetPassword />} />
+      <Route path="password/change" element={<ResetPasswordChange />} />
       <Route path="/enable_mfa" element={<EnableMFA/>}>
       </Route>
     </Routes>
