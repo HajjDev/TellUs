@@ -1,4 +1,4 @@
-async function sendData(ename, pswd){
+async function sendData(ename, pswd, captcha){
     try{
 
         const url = "http://localhost:3001/api/auth/login";
@@ -12,7 +12,8 @@ async function sendData(ename, pswd){
 
             body:JSON.stringify({
                ename,
-               password:pswd
+               password:pswd,
+               captcha
             }),
 
             credentials:"include" //allow cookie
