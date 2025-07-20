@@ -1,24 +1,15 @@
 const express = require('express');
 const speakeasy = require('speakeasy');
-const path = require('path');
-const User = require('../models/user');
-const {verifyAccessToken, accessErrorHandler} = require('../middleware/auth');
-const { v4 : uuidv4 } = require('uuid');
 const QRCode = require('qrcode');
+const User = require('../models/user');
+const {verifyAccessToken, accessErrorHandler, verifyRefreshToken, refreshErrorHandler, updateToken} = require('../middleware/auth');
+const { v4 : uuidv4 } = require('uuid');
+
 
 const router = express.Router();
-
-router.use(verifyAccessToken);
-router.use(accessErrorHandler);
+const middlewares = [verifyAccessToken, accessErrorHandler, verifyRefreshToken, refreshErrorHandler, updateToken];
+router.use(middlewares);
 router.use("/data", express.static(path.join(__dirname, 'views')));
-
-
-const Generator = async (text, filename) => {
-    return await QRCode.toFile(path.join(__dirname, `views/${filename}.svg`), text, function (err) {
-    if (err) throw err
-    console.log('done')
-    });
-}
 
 
 router.post('/enable_totp', async (req, res) =>{
@@ -27,7 +18,7 @@ router.post('/enable_totp', async (req, res) =>{
         const user = await User.findOne({_id:userId});
 
         if (!user){
-            return res.status(404).send('User Not found. Please register first');
+            return res.status(404).send('User Not found');
         }
 
 
@@ -37,10 +28,10 @@ router.post('/enable_totp', async (req, res) =>{
         user.OTP_enabled = false;
         await user.save();  
         
-        const filename = uuidv4();
-        await Generator(secret.otpauth_url, filename);
+        
+        const qrcode = await QRCode.toDataURL(secret.otpauth_url);
 
-        return res.json({filename:`${filename}.svg`});
+        return res.json({tag:`<img src="${filename}" />`});
 
     }catch(err){
         console.error(err.message);
@@ -56,7 +47,7 @@ router.post('/verify_totp', async (req, res)=>{
         const user = await User.findOne({id: userId});
 
         if (!user){
-        throw new Error("User Not Found.");
+            throw new Error("User Not Found.");
         }
 
         if (!user.TOTP_enabled){

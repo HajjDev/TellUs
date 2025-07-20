@@ -8,6 +8,7 @@ const testRoute = require('../route/test');
 const resetRoute = require("../route/reset");
 const enable_totp=require('../route/enable_totp');
 const enable_otp = require('../route/enable_otp');
+const otp_login = require('../route/otp_login');
 const morgan = require('morgan');
 const cookies = require('cookie-parser');
 const cors = require('cors');
@@ -27,12 +28,12 @@ app.use(cors({
 }));
 app.use(limiter);
 app.use('/api/auth', loginRouter);
-app.use('/api/token', refreshToken);
 app.use('/api/register', registerRouter);
 app.use('/api/reset', resetRoute);
 app.use('/test', testRoute);
 app.use('/api/mfa', enable_otp);
 app.use('/api/mfa', enable_totp);
+app.use('/api/otp_login', otp_login);
 
 
 mongoose.connect(MONGO_URI)   
