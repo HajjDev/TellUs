@@ -13,7 +13,7 @@ async function sendData(ename, pswd, captcha){
             body:JSON.stringify({
                ename,
                password:pswd,
-               captcha
+              captcha
             }),
 
             credentials:"include" //allow cookie

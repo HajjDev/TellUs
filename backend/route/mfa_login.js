@@ -2,13 +2,13 @@ const express = require('express');
 const speakeasy = require('speakeasy');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
-
+require('dotenv').config();
 const router = express.Router();
 
 router.post('/mfa_login', async (req, res)=>{
     try{
         const userId = req.cookies.id;
-        const user = await User.findOne({id: userId});
+        const user = await User.findOne({_id: userId});
         const token = req.body.token;
 
         if (!user){
@@ -58,6 +58,7 @@ router.post('/mfa_login', async (req, res)=>{
         }        
 
     }catch(err){
+        console.log(err);
         return res.status(422).send("Something went wrong");
     }
 });

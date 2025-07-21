@@ -2,7 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
+const speakeasy = require('speakeasy');
 const crypto = require('crypto');
+const transporter = require('../config/transporter');
 require('dotenv').config();
 const {verifyCaptcha} = require("../middleware/recaptcha");
 const loginRouter = express.Router();
@@ -37,20 +39,46 @@ loginRouter.post('/login', verifyCaptcha, async (req, res)=>{
 
         if (user.OTP_enabled){
             req.user = user;
-            res.cookie('id', userId, {
+            res.cookie('id', user._id, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === "production", 
                 sameSite: "Lax",       
                 path: "/",
                 maxAge: 1000 * 60 * 30
             });
-            
-            return res.redirect('http://localhost:3001/api/auth/otp_login');
+
+            const secret = speakeasy.generateSecret({length: 20});
+            user.secret = secret.base32;
+            await user.save();
+
+            const token = speakeasy.totp({
+                secret: secret.base32,
+                encoding: 'base32',
+            });
+
+            mailOptions = {
+                from:process.env.AUTH_MAIL,
+                to:user.email,
+                subject:"TellUs connection code",
+                html:`<p>Hello there,</p></br><p>Your verification code is : ${token}</p>`
+            };
+
+            await transporter.sendMail(mailOptions);        
+
+            res.cookie('id', user._id, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production", 
+                sameSite: "Lax",       
+                path: "/",
+                maxAge: 1000 * 60 * 30
+            });
+
+            return res.status(200).send('Credentials verified. waiting for verification code');
         }
 
         if (user.TOP_enabled){
             req.user = user;
-            res.cookie('id', userId, {
+            res.cookie('id', user._id, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === "production", 
                 sameSite: "Lax",       
