@@ -1,13 +1,13 @@
 import sendTokenAtLogin from "../../../requests/auth/mfa_login";
 import { useState } from "react";
 
-function sendMFACode(){
-    const [token, setToken] = useState("");
+function SendMFATokenAtLogin({ GoodCredentials }){
 
-    const handleChange = (event)=>{
-        const value = event.target.value;
-        setToken(value);
+    if (!GoodCredentials){
+        return null
     }
+
+    const [token, setToken] = useState("");
 
     const sendToken = async ()=>{
         await sendTokenAtLogin(token);
@@ -16,17 +16,18 @@ function sendMFACode(){
     return (
         <>
             <div>
+                <p>Please enter the code provided by your authentificator app, or the one you just received by mail.</p>
                 <input
                     type="text" 
                     name="token"
                     value={token}
-                    onChange={handleChange}              
+                    onChange={(e)=>{setToken(e.target.value)}}              
                 />
-                <button onclick={sendToken}></button>
+                <button onClick={sendToken}>Send Code</button>
             </div>
         </>
     )
 
 }
 
-export default sendMFACode;
+export default SendMFATokenAtLogin;

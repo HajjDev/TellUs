@@ -3,6 +3,7 @@ import Layout from './pages/auth/Layout.jsx'
 import LoginPage from './pages/auth/login/Login'
 import Home from './home.jsx'
 import EnableMFA from './pages/enable_MFA/enable_mfa'
+import AdminProfile from "./pages/admin_view/admin_profile.jsx"
 
 import RegisterPersonal from "./pages/auth/register/RegisterPersonal";
 import RegisterCrucial from "./pages/auth/register/RegisterCrucial";
@@ -23,7 +24,7 @@ const App = () => {
           <Route path="register/crucial-info" element={<RegisterCrucial />} />
           <Route path="register/verify-credentials" element={<VerifyCredentials />} />
       </Route>
-      
+      <Route path="/profile" element={<AdminProfile authorized={false} />}/>
       <Route path="password/reset" element={<EmailVerification />} />
       <Route path="password/verify" element={<ResetPassword />} />
       <Route path="password/change" element={<ResetPasswordChange />} />

@@ -1,8 +1,11 @@
-import {Outlet, Link} from "react-router-dom"
+import {Outlet, Link, Navigate} from "react-router-dom";
 
 function AdminProfile({ authorized }){
+    if (!authorized){
+        return <Navigate to="/login" />; 
 
-    
+    }
+
     return (
         <>
             <div>

@@ -1,7 +1,6 @@
 const express = require('express');
 const speakeasy = require('speakeasy');
 const User = require('../models/user');
-const {verifyAccessToken, accessErrorHandler, verifyRefreshToken, refreshErrorHandler, updateToken} = require('../middleware/auth');
 const jwt = require('jsonwebtoken');
 
 const router = express.Router();
@@ -52,11 +51,6 @@ router.post('/mfa_login', async (req, res)=>{
             });
 
             
-            res.status(201).json({message:"successfully connected", user:{
-                id:user._id,
-                username:user.userName
-                //role:user.role
-            }});
 
             return res.status(200).send('MFA verified');
         }else{

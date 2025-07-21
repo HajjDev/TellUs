@@ -5,12 +5,11 @@ const QRCode = require('qrcode');
 const User = require('../models/user');
 const {verifyAccessToken, accessErrorHandler, verifyRefreshToken, refreshErrorHandler, updateToken} = require('../middleware/auth');
 const { v4 : uuidv4 } = require('uuid');
-const path = require("path");
 
 const router = express.Router();
 const middlewares = [verifyAccessToken, accessErrorHandler, verifyRefreshToken, refreshErrorHandler, updateToken];
 router.use(middlewares);
-router.use("/data", express.static(path.join(__dirname, 'views')));
+//router.use("/data", express.static(path.join(__dirname, 'views'))); don't need that anymore, for the moment
 
 
 router.post('/enable_totp', async (req, res) =>{
